@@ -1,17 +1,25 @@
+import lightgbm as lgb
 from sklearn.datasets import load_iris
-from tpot import TPOTClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
-def train_and_evaluate_classifier():
-    X, y = load_iris(return_X_y=True)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-    
-    tpot = TPOTClassifier(generations=5, population_size=50, verbosity=2, random_state=42)
-    tpot.fit(X_train, y_train)
-    
-    print(f"Accuracy score: {tpot.score(X_test, y_test)}")
+# Load the Iris dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
 
-    return tpot
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-if __name__ == "__main__":
-    tpot = train_and_evaluate_classifier()
+# Create a LightGBM classifier
+clf = lgb.LGBMClassifier()
+
+# Train the classifier
+clf.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = clf.predict(X_test)
+
+# Calculate the accuracy of the classifier
+accuracy = accuracy_score(y_test, y_pred)
+print("Accuracy:", accuracy)
